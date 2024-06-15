@@ -10,10 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "antd": "^5.18.1",
     "bootstrap": "^5.3.3",
     "react": "^18.2.0",
-    "react-anime": "^4.1.1",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0"
   },
