@@ -5,65 +5,85 @@ function Dashboard({ currentSong, onNextSong, onPreviousSong, onRandomSong }) {
     console.log("Can't load music");
     return null;
   }
+
   const cdThumbRef = useRef(null);
   const audioRef = useRef(null);
   const timelineRef = useRef(null);
-  const cdThumbAnimationRef = useRef(null); // Store the animation instance
-
+  const cdThumbAnimationRef = useRef(null);
+  const [isRandom, setIsRandom] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const toggleIsRandom = () => {
+    setIsRandom((prevState) => !prevState);
+  };
+
+  const toggleIsRepeat = () => {
+    setIsRepeat((prevState) => !prevState);
+  };
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.src = currentSong.path;
-      audioRef.current
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-          audioRef.current.ontimeupdate = () => {
-            timelineRef.current.value = Math.floor(
-              (audioRef.current.currentTime / audioRef.current.duration) * 100
-            );
-          };
-          audioRef.current.onended = onNextSong;
-        })
-        .catch((error) => {
-          console.log("Error playing audio:", error);
-        });
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error) => {
+        console.log("Error playing audio:", error);
+      });
+
+      // Set up time update and onended event handlers
+      audioRef.current.ontimeupdate = () => {
+        if (audioRef.current && timelineRef.current) {
+          timelineRef.current.value = Math.floor(
+            (audioRef.current.currentTime / audioRef.current.duration) * 100
+          );
+        }
+      };
+
+      audioRef.current.onended = () => {
+        if (isRepeat) {
+          HandleReplaySong();
+        } else {
+          handleNextSong();
+        }
+      };
     }
-  }, [currentSong]);
+  }, [currentSong, isRepeat, onNextSong]);
+
+  const handleNextSong = () => {
+    if (isRandom) {
+      onRandomSong();
+    } else {
+      onNextSong();
+    }
+  };
 
   const HandlePlayPauseClick = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      audioRef.current.ontimeupdate = () => {
-        timelineRef.current.value = Math.floor(
-          (audioRef.current.currentTime / audioRef.current.duration) * 100
-        );
-      };
-      audioRef.current.onended = onNextSong;
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-      audioRef.current.ontimeupdate = () => {
-        timelineRef.current.value = Math.floor(
-          (audioRef.current.currentTime / audioRef.current.duration) * 100
-        );
-      };
-      audioRef.current.onended = onNextSong;
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     }
   };
 
   const TimelineChange = (e) => {
-    audioRef.current.currentTime = Math.floor(
-      (audioRef.current.duration * e.target.value) / 100
-    );
+    if (audioRef.current) {
+      audioRef.current.currentTime = Math.floor(
+        (audioRef.current.duration * e.target.value) / 100
+      );
+    }
   };
 
   const HandleReplaySong = () => {
-    audioRef.current.currentTime = 0;
-    audioRef.current.play();
-    setIsPlaying(true);
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
   };
 
   useEffect(() => {
@@ -74,7 +94,7 @@ function Dashboard({ currentSong, onNextSong, onPreviousSong, onRandomSong }) {
         [{ transform: "rotate(360deg)" }],
         {
           duration: 10000, // 10 seconds
-          iterations: Infinity
+          iterations: Infinity,
         }
       );
       cdThumbAnimationRef.current.pause();
@@ -82,10 +102,12 @@ function Dashboard({ currentSong, onNextSong, onPreviousSong, onRandomSong }) {
   }, []);
 
   useEffect(() => {
-    if (isPlaying) {
-      cdThumbAnimationRef.current?.play();
-    } else {
-      cdThumbAnimationRef.current?.pause();
+    if (cdThumbAnimationRef.current) {
+      if (isPlaying) {
+        cdThumbAnimationRef.current.play();
+      } else {
+        cdThumbAnimationRef.current.pause();
+      }
     }
   }, [isPlaying]);
 
@@ -98,32 +120,32 @@ function Dashboard({ currentSong, onNextSong, onPreviousSong, onRandomSong }) {
 
       <div className="cd">
         <img
-        ref={cdThumbRef}
-          class="cd-thumb"
+          ref={cdThumbRef}
+          className="cd-thumb"
           src={currentSong.image}
           alt={currentSong.name}
         />
       </div>
 
       <div className="control">
-        <div class="btn btn-s btn-repeat" onClick={HandleReplaySong}>
-          <i class="fas fa-redo"></i>
+        <div className={`btn btn-s btn-repeat ${isRepeat ? "active" : ""}`} onClick={toggleIsRepeat}>
+          <i className="fas fa-redo"></i>
         </div>
-        <div class="btn btn-s btn-prev" onClick={onPreviousSong}>
-          <i class="fas fa-step-backward"></i>
+        <div className="btn btn-s btn-prev" onClick={onPreviousSong}>
+          <i className="fas fa-step-backward"></i>
         </div>
-        <div class="btn btn-toggle-play" onClick={HandlePlayPauseClick}>
+        <div className="btn btn-toggle-play" onClick={HandlePlayPauseClick}>
           {isPlaying ? (
-            <i class="fas fa-pause icon-pause"></i>
+            <i className="fas fa-pause icon-pause"></i>
           ) : (
-            <i class="fas fa-play icon-play"></i>
+            <i className="fas fa-play icon-play"></i>
           )}
         </div>
-        <div class="btn btn-s btn-next" onClick={onNextSong}>
-          <i class="fas fa-step-forward"></i>
+        <div className="btn btn-s btn-next" onClick={handleNextSong}>
+          <i className="fas fa-step-forward"></i>
         </div>
-        <div class="btn btn-s btn-random" onClick={onRandomSong}>
-          <i class="fas fa-random"></i>
+        <div className={`btn btn-s btn-random ${isRandom ? "active" : ""}`} onClick={toggleIsRandom}>
+          <i className="fas fa-random"></i>
         </div>
       </div>
       <input
