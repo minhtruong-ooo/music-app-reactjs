@@ -1,63 +1,78 @@
-
-import React, {useState} from 'react';
-import Dashboard from './components/dashboard/Dashboard'
-import Playlist from './components/playlist/Playlist'
-
+import React, { useState } from "react";
+import Dashboard from "./components/dashboard/Dashboard";
+import Playlist from "./components/playlist/Playlist";
+import ChungTaCuaHienTai from "./assets/music/ChungTaCuaHienTai-SonTungMTP-6892340.mp3";
+import EmCuaNgayHomQua from "./assets/music/EmCuaNgayHomQua-SonTungMTP-2882720.mp3";
+import HayTraoChoAnh from "./assets/music/HayTraoChoAnh-SonTungMTPSnoopDogg-6010660.mp3";
+import LacTroi from "./assets/music/LacTroi-SonTungMTP-4725907.mp3";
+import NangAmXaDan from "./assets/music/NangAmXaDan-SonTungMTP-2697291.mp3";
+import NoiNayCoAnh from "./assets/music/NoiNayCoAnh-SonTungMTP-4772041.mp3";
 
 const songs = [
   {
-    name: "Click Pow Get Down",
-    singer: "Raftaar x Fortnite",
-    path: "https://mp3.vlcmusic.com/download.php?track_id=34737&format=320",
-    image: "https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg"
-  },
-  {
-    name: "Tu Phir Se Aana",
-    singer: "Raftaar x Salim Merchant x Karma",
-    path: "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
+    name: "Hãy Trao Cho Anh",
+    singer: "Sơn Tùng M-TP x Snoop Dogg",
+    path: HayTraoChoAnh,
     image:
-      "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
+      "https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/b/a/2/d/ba2dc0a1c982fa0b1fca5ed2530fe7a9.jpg",
   },
   {
-    name: "Naachne Ka Shaunq",
-    singer: "Raftaar x Brobha V",
-    path:
-      "https://mp3.filmysongs.in/download.php?id=Naachne Ka Shaunq Raftaar Ft Brodha V Mp3 Hindi Song Filmysongs.co.mp3",
-    image: "https://i.ytimg.com/vi/QvswgfLDuPg/maxresdefault.jpg"
-  },
-  {
-    name: "Mantoiyat",
-    singer: "Raftaar x Nawazuddin Siddiqui",
-    path: "https://mp3.vlcmusic.com/download.php?track_id=14448&format=320",
+    name: "Nơi Này Có Anh",
+    singer: "Sơn Tùng M-TP",
+    path: NoiNayCoAnh,
     image:
-      "https://a10.gaanacdn.com/images/song/39/24225939/crop_480x480_1536749130.jpg"
+      "https://upload.wikimedia.org/wikipedia/vi/1/1d/N%C6%A1i_n%C3%A0y_c%C3%B3_anh_-_Single_Cover.jpg",
   },
   {
-    name: "Aage Chal",
-    singer: "Raftaar",
-    path: "https://mp3.vlcmusic.com/download.php?track_id=25791&format=320",
+    name: "Chúng Ta Của Hiện Tại",
+    singer: "Sơn Tùng M-TP",
+    path: ChungTaCuaHienTai,
     image:
-      "https://a10.gaanacdn.com/images/albums/72/3019572/crop_480x480_3019572.jpg"
+      "https://photo-resize-zmp3.zadn.vn/w600_r1x1_jpeg/cover/f/0/c/6/f0c6b74652e9ed643f3183c7617aaa30.jpg",
   },
   {
-    name: "Feeling You",
-    singer: "Raftaar x Harjas",
-    path: "https://mp3.vlcmusic.com/download.php?track_id=27145&format=320",
+    name: "Em Của Ngày Hôm Qua",
+    singer: "Sơn Tùng M-TP",
+    path: EmCuaNgayHomQua,
     image:
-      "https://a10.gaanacdn.com/gn_img/albums/YoEWlabzXB/oEWlj5gYKz/size_xxl_1586752323.webp"
-  }
-]
+      "https://upload.wikimedia.org/wikipedia/vi/thumb/5/5d/Em_c%E1%BB%A7a_ng%C3%A0y_h%C3%B4m_qua.png/220px-Em_c%E1%BB%A7a_ng%C3%A0y_h%C3%B4m_qua.png",
+  },
+  {
+    name: "Lạc Trôi",
+    singer: "Sơn Tùng M-TP",
+    path: LacTroi,
+    image:
+      "https://upload.wikimedia.org/wikipedia/vi/5/5d/Lac_troi_single_sontungmtp.jpg",
+  },
+  {
+    name: "Nắng Ấm Xa Dần",
+    singer: "Sơn Tùng M-TP",
+    path: NangAmXaDan,
+    image: "https://i.scdn.co/image/ab67616d0000b27306a4d1fd269dc47911d37eb3",
+  },
+];
 
 function App() {
-  const [currentSong, setCurrentSong] = useState(songs[0]);
+  const [currentSong, setCurrentSong] = useState(0);
+
+  const handleNextSong = () => {
+    setCurrentSong((prevIndex) => (prevIndex + 1) % songs.length);
+  };
+  const handlePreviousSong = () => {
+    setCurrentSong((prevIndex) => (prevIndex - 1 + songs.length) % songs.length);
+  };
+  const handleRandomSong = () => {
+    setCurrentSong(Math.floor(Math.random() * (songs.length)));
+  };
+
   return (
     <>
-    <div className='player'>
-      <Dashboard currentSong={currentSong}></Dashboard>
-      <Playlist songs={songs} setCurrentSong={setCurrentSong}></Playlist>
-    </div>
+      <div className="player">
+        <Dashboard currentSong={songs[currentSong]} onNextSong={handleNextSong} onPreviousSong={handlePreviousSong} onRandomSong={handleRandomSong}></Dashboard>
+        <Playlist songs={songs} setCurrentSong={(song) => setCurrentSong(songs.indexOf(song))}></Playlist>
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,6 +1,8 @@
 import React from "react";
 
 function Playlist({ songs, setCurrentSong }) {
+
+
   return (
     <div className="playlist">
     {songs.map((song, index) => (
@@ -13,7 +15,7 @@ function Playlist({ songs, setCurrentSong }) {
           <p className="author">{song.singer}</p>
         </div>
         <div className="option">
-          <i className="fas fa-ellipsis-h"></i>
+            <a href={song.path} download={`${song.name}.mp3`}><i className="fas fa-download"></i></a>
         </div>
       </div>
     ))}
