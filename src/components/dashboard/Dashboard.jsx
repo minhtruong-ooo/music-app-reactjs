@@ -31,7 +31,6 @@ function Dashboard({ currentSong, onNextSong, onPreviousSong, onRandomSong }) {
         console.log("Error playing audio:", error);
       });
 
-      // Set up time update and onended event handlers
       audioRef.current.ontimeupdate = () => {
         if (audioRef.current && timelineRef.current) {
           timelineRef.current.value = Math.floor(
